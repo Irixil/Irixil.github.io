@@ -15,8 +15,8 @@
       --color-royal-violet: #7333f1;
       --color-antique-gold: #d7b73b;
       --font-helvetica: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, Arial, sans-serif;
-      --card-w: 200px;
-      --card-h: 280px;
+      --card-w: 180px;
+      --card-h: 252px;
       --page-max-width: 1200px;
       --section-gap: 72px;
       --radius-cards: 13px;
@@ -195,7 +195,7 @@
     /* ============ Hero ============ */
     .hero {
       position: relative;
-      min-height: 100vh;
+      min-height: max(960px, 110vh);
       background: var(--color-game-night-black);
       overflow: hidden;
     }
@@ -203,10 +203,10 @@
     /* 标题：头像右侧 */
     .hero-headline {
       position: absolute;
-      left: 27%;
-      top: 8%;
+      left: 26%;
+      top: 15%;
       z-index: 30;
-      max-width: 42%;
+      max-width: 31%;
     }
     .hero-headline .hero-wordmark {
       font-size: clamp(34px, 4vw, 46px);
@@ -221,9 +221,9 @@
     .hero-content {
       position: absolute;
       left: 5%;
-      top: 46%;
+      top: 51%;
       z-index: 30;
-      max-width: 560px;
+      max-width: min(520px, 46%);
     }
     .hero-wordmark {
       font-size: clamp(40px, 5.5vw, 58px); font-weight: 800; line-height: 1;
@@ -382,13 +382,26 @@
     }
 
     /* ============ 响应式 ============ */
+    @media (min-width: 901px) and (max-width: 1100px) {
+      :root { --card-w: 160px; --card-h: 224px; }
+      .table .card-wrap:nth-child(2) { --x: 80% !important; }
+      .table .card-wrap:nth-child(3) { --x: 61.5% !important; }
+      .table .card-wrap:nth-child(5) { --x: 80% !important; }
+      .table .card-wrap:nth-child(6) { --x: 54% !important; }
+      .table .card-wrap:nth-child(7) { --x: 63% !important; }
+      .table .card-wrap:nth-child(8) { --x: 72% !important; }
+      .table .card-wrap:nth-child(9) { --x: 81.5% !important; }
+    }
+
     @media (max-width: 900px) {
       .nav-links { display: none; }
       .table { display: none; }
       .portrait-card { display: none; }
       .about-grid, .services-grid, .article-card { grid-template-columns: 1fr; }
       :root { --card-w: 140px; --card-h: 196px; --section-gap: 72px; }
-      .hero-content { left: 8%; max-width: 84%; }
+      .hero { min-height: 900px; }
+      .hero-headline { left: 8%; top: 15%; max-width: 84%; }
+      .hero-content { left: 8%; top: 43%; max-width: 84%; }
     }
   </style>
 </head>
@@ -413,7 +426,7 @@
   <!-- Hero -->
   <section class="hero">
     <!-- 头像卡：左上角独立区域（绿框，比普通卡大 20%） -->
-    <div class="card-wrap portrait-card" style="--x:4%; --y:3%; --rot:-5deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
+    <div class="card-wrap portrait-card" style="--x:4%; --y:15%; --rot:-5deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
       <div class="card-drop">
         <div class="card front portrait">
           <div class="portrait-avatar">
@@ -428,37 +441,56 @@
       </div>
     </div>
 
-    <!-- 牌堆：右侧散落，上 2 张、下 4 张清晰可见 -->
+    <!-- 牌堆：右侧散落，按 2、3、4 三行排布 -->
     <div class="table" aria-hidden="true">
-      <div class="card-wrap" style="--x:62%; --y:8%; --rot:-15deg; --z:3; --delay:0.12s; --drop-rot:-40deg;">
+      <!-- 第一行：2 张 -->
+      <div class="card-wrap" style="--x:65%; --y:15%; --rot:-12deg; --z:3; --delay:0.12s; --drop-rot:-40deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">改需求</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:80%; --y:18%; --rot:12deg; --z:4; --delay:0.2s; --drop-rot:35deg;">
+      <div class="card-wrap" style="--x:81%; --y:18%; --rot:10deg; --z:4; --delay:0.2s; --drop-rot:35deg;">
         <div class="card-drop">
           <div class="card front red"><span class="card-text">数据驱动</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
 
-      <div class="card-wrap" style="--x:58%; --y:42%; --rot:-18deg; --z:5; --delay:0.28s; --drop-rot:-45deg;">
+      <!-- 第二行：3 张 -->
+      <div class="card-wrap" style="--x:58%; --y:39%; --rot:-14deg; --z:5; --delay:0.28s; --drop-rot:-45deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">MVP</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:76%; --y:48%; --rot:15deg; --z:6; --delay:0.36s; --drop-rot:30deg;">
+      <div class="card-wrap" style="--x:71%; --y:42%; --rot:8deg; --z:6; --delay:0.36s; --drop-rot:30deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">AI 赋能</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:63%; --y:57%; --rot:-12deg; --z:7; --delay:0.44s; --drop-rot:-30deg;">
+      <div class="card-wrap" style="--x:84%; --y:38%; --rot:14deg; --z:7; --delay:0.44s; --drop-rot:-30deg;">
         <div class="card-drop">
           <div class="card front gold"><span class="card-text">用户画像</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:81%; --y:65%; --rot:20deg; --z:8; --delay:0.52s; --drop-rot:40deg;">
+
+      <!-- 第三行：4 张 -->
+      <div class="card-wrap" style="--x:51%; --y:64%; --rot:-16deg; --z:8; --delay:0.52s; --drop-rot:40deg;">
         <div class="card-drop">
           <div class="card front violet"><span class="card-text">Agent</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:63%; --y:61%; --rot:-5deg; --z:9; --delay:0.6s; --drop-rot:-35deg;">
+        <div class="card-drop">
+          <div class="card front red"><span class="card-text">A/B 测试</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:75%; --y:65%; --rot:7deg; --z:10; --delay:0.68s; --drop-rot:32deg;">
+        <div class="card-drop">
+          <div class="card front gold"><span class="card-text">0 → 1</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:calc(100% - 220px); --y:60%; --rot:17deg; --z:11; --delay:0.76s; --drop-rot:45deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">Prompt</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
     </div>
