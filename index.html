@@ -200,23 +200,23 @@
     /* 标题：位于头像与牌堆之间的空隙 */
     .hero-content {
       position: absolute;
-      left: 22%;
+      left: 23%;
       top: 50%;
       transform: translateY(-50%);
       z-index: 30;
-      max-width: 340px;
+      max-width: 320px;
     }
     .hero-wordmark {
-      font-size: clamp(32px, 4vw, 48px); font-weight: 800; line-height: 1;
-      color: var(--color-card-white); margin-bottom: 28px;
+      font-size: clamp(36px, 5vw, 54px); font-weight: 800; line-height: 1;
+      color: var(--color-card-white); margin-bottom: 26px;
     }
     .hero h1 {
-      font-size: clamp(28px, 4.2vw, 52px); font-weight: 800; line-height: 1.02;
-      color: var(--color-card-white); margin-bottom: 32px;
+      font-size: clamp(32px, 4.8vw, 58px); font-weight: 800; line-height: 1.02;
+      color: var(--color-card-white); margin-bottom: 30px;
     }
     .hero .subtitle {
-      font-size: 15px; font-weight: 800; line-height: 1.5;
-      color: var(--color-card-white); opacity: 0.75; margin-bottom: 40px; max-width: 320px;
+      font-size: 16px; font-weight: 800; line-height: 1.5;
+      color: var(--color-card-white); opacity: 0.75; margin-bottom: 38px; max-width: 330px;
     }
     .hero .cta { display: flex; gap: 14px; flex-wrap: wrap; }
 
@@ -359,7 +359,7 @@
   <!-- Hero -->
   <section class="hero">
     <!-- 头像卡：左上角独立区域 -->
-    <div class="card-wrap" style="--x:4%; --y:10%; --rot:-6deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
+    <div class="card-wrap" style="--x:2%; --y:12%; --rot:-6deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
       <div class="card-drop">
         <div class="card front portrait">
           <div class="portrait-avatar">
@@ -374,51 +374,61 @@
       </div>
     </div>
 
-    <!-- 牌堆：右侧大幅旋转堆叠 -->
+    <!-- 牌堆：右侧密集堆叠 -->
     <div class="table" aria-hidden="true">
       <!-- 堆 1：右上 -->
-      <div class="card-wrap" style="--x:66%; --y:8%; --rot:-34deg; --z:3; --delay:0.12s; --drop-rot:-60deg;">
+      <div class="card-wrap" style="--x:62%; --y:6%; --rot:-24deg; --z:3; --delay:0.12s; --drop-rot:-50deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">改需求</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:72%; --y:14%; --rot:16deg; --z:4; --delay:0.2s; --drop-rot:45deg;">
+      <div class="card-wrap" style="--x:67%; --y:11%; --rot:10deg; --z:4; --delay:0.2s; --drop-rot:35deg;">
         <div class="card-drop">
           <div class="card front red"><span class="card-text">数据驱动</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:67%; --y:20%; --rot:46deg; --z:5; --delay:0.28s; --drop-rot:70deg;">
+      <div class="card-wrap" style="--x:63%; --y:18%; --rot:30deg; --z:5; --delay:0.28s; --drop-rot:55deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">MVP</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
 
       <!-- 堆 2：右中 -->
-      <div class="card-wrap" style="--x:74%; --y:40%; --rot:-40deg; --z:6; --delay:0.36s; --drop-rot:-55deg;">
+      <div class="card-wrap" style="--x:72%; --y:38%; --rot:-26deg; --z:6; --delay:0.36s; --drop-rot:-45deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">AI 赋能</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:80%; --y:45%; --rot:28deg; --z:7; --delay:0.44s; --drop-rot:50deg;">
+      <div class="card-wrap" style="--x:78%; --y:43%; --rot:18deg; --z:7; --delay:0.44s; --drop-rot:40deg;">
         <div class="card-drop">
           <div class="card front gold"><span class="card-text">用户画像</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:73%; --y:52%; --rot:56deg; --z:8; --delay:0.52s; --drop-rot:75deg;">
+      <div class="card-wrap" style="--x:73%; --y:50%; --rot:34deg; --z:8; --delay:0.52s; --drop-rot:60deg;">
         <div class="card-drop">
           <div class="card front violet"><span class="card-text">Agent</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-
-      <!-- 堆 3：右下 -->
-      <div class="card-wrap" style="--x:84%; --y:70%; --rot:-36deg; --z:9; --delay:0.6s; --drop-rot:-50deg;">
+      <div class="card-wrap" style="--x:80%; --y:55%; --rot:-16deg; --z:9; --delay:0.6s; --drop-rot:-35deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">需求评审</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
-      <div class="card-wrap" style="--x:89%; --y:76%; --rot:24deg; --z:10; --delay:0.68s; --drop-rot:40deg;">
+
+      <!-- 堆 3：右下 -->
+      <div class="card-wrap" style="--x:84%; --y:68%; --rot:-24deg; --z:10; --delay:0.68s; --drop-rot:-40deg;">
         <div class="card-drop">
           <div class="card front"><span class="card-text">灰度发布</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:89%; --y:74%; --rot:16deg; --z:11; --delay:0.76s; --drop-rot:30deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">增长黑客</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:86%; --y:80%; --rot:-10deg; --z:12; --delay:0.84s; --drop-rot:-25deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">Prompt</span><span class="card-brand">宋华英·PM</span></div>
         </div>
       </div>
     </div>
