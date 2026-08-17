@@ -1,0 +1,3 @@
+# 排除与网站无关的文件
+PI_INSTALL_GUIDE.md
+.DS_Store

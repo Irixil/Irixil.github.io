@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宋华英 · AI 产品经理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --color-game-night-black: #000000;
+      --color-card-white: #ffffff;
+      --color-signal-red: #fe2f2f;
+      --color-royal-violet: #7333f1;
+      --color-antique-gold: #d7b73b;
+      --font-helvetica: 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', ui-sans-serif, system-ui, Arial, sans-serif;
+      --card-w: 200px;
+      --card-h: 280px;
+      --page-max-width: 1200px;
+      --section-gap: 100px;
+      --radius-cards: 13px;
+      --radius-pill: 38px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-helvetica);
+      font-weight: 800;
+      background: var(--color-game-night-black);
+      color: var(--color-card-white);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: var(--page-max-width);
+      margin: 0 auto;
+      padding: 0 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ============ 滚动淡入 ============ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal.in-view { opacity: 1; transform: none; }
+    .reveal.d1 { transition-delay: 0.08s; }
+    .reveal.d2 { transition-delay: 0.16s; }
+    .reveal.d3 { transition-delay: 0.24s; }
+
+    /* ============ 顶部导航 ============ */
+    header {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+    .logo { font-size: 24px; font-weight: 800; color: var(--color-card-white); text-decoration: none; }
+    .nav-links { display: flex; align-items: center; gap: 8px; }
+    .nav-links a {
+      font-size: 16px; font-weight: 800; color: var(--color-card-white);
+      text-decoration: none; padding: 8px 16px; border-radius: var(--radius-pill);
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .nav-links a:hover { background: var(--color-card-white); color: var(--color-game-night-black); }
+    .nav-cta {
+      font-size: 16px; font-weight: 800; color: var(--color-card-white);
+      text-decoration: none; border-radius: var(--radius-pill); padding: 12px 24px;
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px inset;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+    .nav-cta:hover { background: var(--color-card-white); color: var(--color-game-night-black); }
+
+    /* ============ 按钮 ============ */
+    .btn {
+      display: inline-block; font-family: var(--font-helvetica); font-weight: 800;
+      font-size: 16px; text-decoration: none; border-radius: var(--radius-pill);
+      padding: 14px 32px; cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+    .btn-on-dark { color: var(--color-card-white); box-shadow: rgb(255,255,255) 0px 0px 0px 2px inset; }
+    .btn-on-dark:hover { background: var(--color-card-white); color: var(--color-game-night-black); }
+    .btn-on-light { color: var(--color-game-night-black); box-shadow: rgb(0,0,0) 0px 0px 0px 2px inset; }
+    .btn-on-light:hover { background: var(--color-game-night-black); color: var(--color-card-white); }
+    .btn-fill-red { background: var(--color-signal-red); color: var(--color-card-white); box-shadow: rgb(255,255,255) 0px 0px 0px 2px inset; }
+    .btn-fill-red:hover { background: var(--color-card-white); color: var(--color-signal-red); box-shadow: rgb(254,47,47) 0px 0px 0px 2px inset; }
+
+    /* ============ 扑克牌 ============ */
+    .table {
+      position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    }
+
+    .card-wrap {
+      position: absolute;
+      width: var(--card-w);
+      height: var(--card-h);
+      left: var(--x);
+      top: var(--y);
+      transform: rotate(var(--rot, 0deg));
+      z-index: var(--z, 1);
+      pointer-events: auto;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), z-index 0s;
+    }
+
+    .card-drop {
+      width: 100%;
+      height: 100%;
+      animation: cardDrop 0.95s cubic-bezier(0.34, 1.3, 0.5, 1) var(--delay, 0s) backwards;
+    }
+
+    @keyframes cardDrop {
+      0%   { transform: translateY(-130vh) rotate(var(--drop-rot, -45deg)) scale(0.7); opacity: 0; }
+      55%  { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      72%  { transform: translateY(-26px) rotate(0deg) scale(1); }
+      100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+    }
+
+    .card {
+      position: relative;
+      width: 100%; height: 100%;
+      border-radius: var(--radius-cards);
+      transform: scale(var(--s, 0.9));
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+                  background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card.front {
+      background: var(--color-card-white);
+      color: var(--color-game-night-black);
+      box-shadow: rgb(0, 0, 0) 0px 0px 0px 2px inset;
+    }
+    .card.front .card-text {
+      font-size: 26px; font-weight: 800; line-height: 1.12;
+      text-align: center; padding: 0 20px;
+    }
+    .card.front .card-brand {
+      position: absolute; bottom: 16px; left: 0; right: 0;
+      text-align: center; font-size: 12px; font-weight: 800; opacity: 0.35;
+    }
+    .card.front.red { box-shadow: rgb(254, 47, 47) 0px 0px 0px 2px inset; }
+    .card.front.violet { box-shadow: rgb(115, 51, 241) 0px 0px 0px 2px inset; }
+    .card.front.gold { box-shadow: rgb(215, 183, 59) 0px 0px 0px 2px inset; }
+
+    /* hover 拿起 + 白牌变黑 */
+    .card-wrap:hover { transform: rotate(0deg) translateY(-16px); z-index: 99 !important; }
+    .card-wrap:hover .card { transform: scale(1.06); }
+    .card-wrap:hover .card.front {
+      background: var(--color-game-night-black);
+      color: var(--color-card-white);
+      box-shadow: rgb(255, 255, 255) 0px 0px 0px 2px inset;
+    }
+    .card-wrap:hover .card.front .card-brand { opacity: 0.6; }
+
+    /* 形象卡 */
+    .card.front.portrait {
+      justify-content: center;
+      gap: 14px;
+    }
+    .portrait-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      border: 3px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.05);
+    }
+    .portrait-name {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .portrait-role {
+      font-size: 14px;
+      font-weight: 800;
+      opacity: 0.45;
+    }
+
+    /* ============ Hero ============ */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      background: var(--color-game-night-black);
+      overflow: hidden;
+    }
+
+    /* 标题：位于头像与牌堆之间的空隙 */
+    .hero-content {
+      position: absolute;
+      left: 22%;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 30;
+      max-width: 340px;
+    }
+    .hero-wordmark {
+      font-size: clamp(32px, 4vw, 48px); font-weight: 800; line-height: 1;
+      color: var(--color-card-white); margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 4.2vw, 52px); font-weight: 800; line-height: 1.02;
+      color: var(--color-card-white); margin-bottom: 32px;
+    }
+    .hero .subtitle {
+      font-size: 15px; font-weight: 800; line-height: 1.5;
+      color: var(--color-card-white); opacity: 0.75; margin-bottom: 40px; max-width: 320px;
+    }
+    .hero .cta { display: flex; gap: 14px; flex-wrap: wrap; }
+
+    /* ============ 章节通用 ============ */
+    section { position: relative; padding: var(--section-gap) 0; }
+    .section-badge {
+      display: inline-block; font-size: 12px; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.06em; border-radius: var(--radius-pill); padding: 6px 16px; margin-bottom: 24px;
+    }
+    .section-badge.on-dark { color: var(--color-card-white); box-shadow: rgb(255,255,255) 0px 0px 0px 2px inset; }
+    .section-badge.on-light { color: var(--color-game-night-black); box-shadow: rgb(0,0,0) 0px 0px 0px 2px inset; }
+    .section-badge.red { color: var(--color-signal-red); box-shadow: rgb(254,47,47) 0px 0px 0px 2px inset; }
+    .section-badge.violet { color: var(--color-royal-violet); box-shadow: rgb(115,51,241) 0px 0px 0px 2px inset; }
+    .section-badge.gold { color: var(--color-antique-gold); box-shadow: rgb(215,183,59) 0px 0px 0px 2px inset; }
+    .section-headline {
+      font-size: clamp(32px, 5vw, 55px); font-weight: 800; line-height: 1.05; letter-spacing: 0;
+      margin-bottom: 56px; max-width: 800px;
+    }
+    .section-headline.on-dark { color: var(--color-card-white); }
+    .section-headline.on-light { color: var(--color-game-night-black); }
+    .light-section { background: var(--color-card-white); color: var(--color-game-night-black); }
+
+    /* ============ 关于 ============ */
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .info-card {
+      background: var(--color-card-white); color: var(--color-game-night-black);
+      border-radius: var(--radius-cards); padding: 32px;
+      box-shadow: rgb(0,0,0) 0px 0px 0px 2px inset;
+    }
+    .info-card h3 { font-size: 24px; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+    .info-card p { font-size: 16px; font-weight: 800; line-height: 1.5; opacity: 0.8; }
+
+    /* ============ 能力 ============ */
+    .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .service-card {
+      background: var(--color-card-white); color: var(--color-game-night-black);
+      border-radius: var(--radius-cards); padding: 32px;
+      box-shadow: rgb(255,255,255) 0px 0px 0px 2px inset;
+      transform: rotate(var(--r, 0deg));
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .service-card:hover { transform: rotate(0deg) translateY(-8px); }
+    .service-card.accent-red { box-shadow: rgb(254,47,47) 0px 0px 0px 2px inset; }
+    .service-card.accent-violet { box-shadow: rgb(115,51,241) 0px 0px 0px 2px inset; }
+    .service-card.accent-gold { box-shadow: rgb(215,183,59) 0px 0px 0px 2px inset; }
+    .service-card .num { display: block; font-size: 12px; font-weight: 800; opacity: 0.5; margin-bottom: 20px; }
+    .service-card h3 { font-size: 24px; font-weight: 800; line-height: 1.25; margin-bottom: 16px; }
+    .service-card p { font-size: 16px; font-weight: 800; line-height: 1.5; opacity: 0.8; margin-bottom: 20px; }
+    .service-card .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .service-card .tag {
+      font-size: 12px; font-weight: 800; border-radius: var(--radius-pill);
+      padding: 5px 12px; color: var(--color-game-night-black);
+      box-shadow: rgb(0,0,0) 0px 0px 0px 2px inset;
+    }
+
+    /* ============ 项目 ============ */
+    .project-list { display: flex; flex-direction: column; gap: 20px; }
+    .project-card {
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      background: var(--color-card-white); color: var(--color-game-night-black);
+      border-radius: var(--radius-cards); padding: 32px;
+      box-shadow: rgb(0,0,0) 0px 0px 0px 2px inset; text-decoration: none;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .project-card:hover { transform: translateY(-6px); }
+    .project-card h3 { font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 8px; }
+    .project-card .meta { font-size: 14px; font-weight: 800; opacity: 0.6; }
+    .project-card .desc { font-size: 16px; font-weight: 800; opacity: 0.8; margin-top: 8px; }
+    .project-card .arrow { flex-shrink: 0; color: var(--color-game-night-black); transition: transform 0.3s ease; }
+    .project-card:hover .arrow { transform: translateX(8px); }
+
+    /* ============ 文章 ============ */
+    .article-card {
+      display: grid; grid-template-columns: 1fr 1fr;
+      background: var(--color-card-white); color: var(--color-game-night-black);
+      border-radius: var(--radius-cards); overflow: hidden; text-decoration: none;
+      box-shadow: rgb(255,255,255) 0px 0px 0px 2px inset;
+      transform: rotate(-1deg);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .article-card:hover { transform: rotate(0deg) translateY(-8px); }
+    .article-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.16,1,0.3,1); }
+    .article-card:hover .article-cover img { transform: scale(1.05); }
+    .article-info { padding: 40px; }
+    .article-info .article-tag {
+      display: inline-block; font-size: 12px; font-weight: 800; color: var(--color-signal-red);
+      border-radius: var(--radius-pill); padding: 6px 16px;
+      box-shadow: rgb(254,47,47) 0px 0px 0px 2px inset; margin-bottom: 20px;
+    }
+    .article-info h3 { font-size: 28px; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .article-info p { font-size: 16px; font-weight: 800; line-height: 1.5; opacity: 0.8; margin-bottom: 32px; }
+
+    /* ============ 联系 ============ */
+    .contact-inner { max-width: 640px; }
+    .contact-inner p { font-size: 20px; font-weight: 800; line-height: 1.4; color: var(--color-game-night-black); opacity: 0.75; margin-bottom: 40px; }
+    .contact-links { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* ============ 页脚 ============ */
+    footer { background: var(--color-game-night-black); padding: 80px 0 48px; color: var(--color-card-white); }
+    .footer-wordmark { font-size: clamp(48px, 8vw, 96px); font-weight: 800; line-height: 0.98; margin-bottom: 56px; }
+    .footer-grid { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 40px; margin-bottom: 56px; }
+    .footer-col { display: flex; flex-direction: column; gap: 14px; }
+    .footer-col .label { font-size: 12px; font-weight: 800; text-transform: uppercase; opacity: 0.5; }
+    .footer-col a { font-size: 20px; font-weight: 800; color: var(--color-card-white); text-decoration: none; transition: opacity 0.25s ease; }
+    .footer-col a:hover { opacity: 0.6; }
+    .footer-bottom {
+      display: flex; justify-content: space-between; flex-wrap: wrap; gap: 16px;
+      border-top: 1px solid rgba(255,255,255,0.15); padding-top: 32px;
+      font-size: 14px; font-weight: 800; opacity: 0.5;
+    }
+
+    /* ============ 响应式 ============ */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .table { display: none; }
+      .about-grid, .services-grid, .article-card { grid-template-columns: 1fr; }
+      :root { --card-w: 140px; --card-h: 196px; --section-gap: 72px; }
+      .hero-content { left: 8%; max-width: 84%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <header>
+    <div class="container">
+      <nav class="nav">
+        <a href="#" class="logo">宋华英</a>
+        <div class="nav-links">
+          <a href="#about">关于</a>
+          <a href="#expertise">能力</a>
+          <a href="#projects">项目</a>
+          <a href="#writing">文章</a>
+          <a href="#contact">联系</a>
+        </div>
+        <a href="#contact" class="nav-cta">联系我</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <!-- 头像卡：左上角独立区域 -->
+    <div class="card-wrap" style="--x:4%; --y:10%; --rot:-6deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
+      <div class="card-drop">
+        <div class="card front portrait">
+          <div class="portrait-avatar">
+            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="8" r="4"></circle>
+              <path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path>
+            </svg>
+          </div>
+          <span class="portrait-name">宋华英</span>
+          <span class="portrait-role">AI 产品经理</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 牌堆：右侧大幅旋转堆叠 -->
+    <div class="table" aria-hidden="true">
+      <!-- 堆 1：右上 -->
+      <div class="card-wrap" style="--x:66%; --y:8%; --rot:-34deg; --z:3; --delay:0.12s; --drop-rot:-60deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">改需求</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:72%; --y:14%; --rot:16deg; --z:4; --delay:0.2s; --drop-rot:45deg;">
+        <div class="card-drop">
+          <div class="card front red"><span class="card-text">数据驱动</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:67%; --y:20%; --rot:46deg; --z:5; --delay:0.28s; --drop-rot:70deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">MVP</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+
+      <!-- 堆 2：右中 -->
+      <div class="card-wrap" style="--x:74%; --y:40%; --rot:-40deg; --z:6; --delay:0.36s; --drop-rot:-55deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">AI 赋能</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:80%; --y:45%; --rot:28deg; --z:7; --delay:0.44s; --drop-rot:50deg;">
+        <div class="card-drop">
+          <div class="card front gold"><span class="card-text">用户画像</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:73%; --y:52%; --rot:56deg; --z:8; --delay:0.52s; --drop-rot:75deg;">
+        <div class="card-drop">
+          <div class="card front violet"><span class="card-text">Agent</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+
+      <!-- 堆 3：右下 -->
+      <div class="card-wrap" style="--x:84%; --y:70%; --rot:-36deg; --z:9; --delay:0.6s; --drop-rot:-50deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">需求评审</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+      <div class="card-wrap" style="--x:89%; --y:76%; --rot:24deg; --z:10; --delay:0.68s; --drop-rot:40deg;">
+        <div class="card-drop">
+          <div class="card front"><span class="card-text">灰度发布</span><span class="card-brand">宋华英·PM</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标题：中间空隙 -->
+    <div class="hero-content">
+      <div class="hero-wordmark reveal">宋华英</div>
+      <h1 class="reveal d1">用 AI 打造<br>更好的产品。</h1>
+      <p class="subtitle reveal d2">资深 AI 产品经理，专注 AI 产品规划、设计与落地。</p>
+      <div class="cta reveal d3">
+        <a href="#projects" class="btn btn-fill-red">查看项目</a>
+        <a href="https://www.woshipm.com/pd/6443791.html" target="_blank" class="btn btn-on-dark">阅读文章</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 关于（白） -->
+  <section class="light-section" id="about">
+    <div class="container">
+      <span class="section-badge on-light reveal">About</span>
+      <h2 class="section-headline on-light reveal d1">把 AI 能力变成<br>真实的产品价值。</h2>
+      <div class="about-grid">
+        <div class="info-card reveal">
+          <h3>关于我</h3>
+          <p>我是一名资深 AI 产品经理，长期在人工智能与产品的交叉地带工作，关注 AI 如何重塑产品形态、提升效率与创造新体验。</p>
+        </div>
+        <div class="info-card reveal d1">
+          <h3>我的方法</h3>
+          <p>坚持用证据与数据做判断，从用户真实需求出发定义产品，让技术服务于人，而非为技术而技术。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 能力（黑） -->
+  <section id="expertise">
+    <div class="container">
+      <span class="section-badge red reveal">Expertise</span>
+      <h2 class="section-headline on-dark reveal d1">专业能力。</h2>
+      <div class="services-grid">
+        <div class="service-card reveal" style="--r:-1.5deg;">
+          <span class="num">01</span>
+          <h3>AI 产品规划</h3>
+          <p>从 0 到 1 定义 AI 产品方向，构建清晰的路线图与落地路径。</p>
+          <div class="tags">
+            <span class="tag">AI 战略</span>
+            <span class="tag">路线图</span>
+            <span class="tag">PRD</span>
+          </div>
+        </div>
+        <div class="service-card accent-red reveal d1" style="--r:1.2deg;">
+          <span class="num">02</span>
+          <h3>产品策略与增长</h3>
+          <p>洞察市场与用户，制定产品策略，驱动增长与商业化。</p>
+          <div class="tags">
+            <span class="tag">竞品分析</span>
+            <span class="tag">增长</span>
+            <span class="tag">商业化</span>
+          </div>
+        </div>
+        <div class="service-card accent-gold reveal d1" style="--r:-1deg;">
+          <span class="num">03</span>
+          <h3>用户研究与数据</h3>
+          <p>用数据驱动决策，深挖用户需求，验证产品假设。</p>
+          <div class="tags">
+            <span class="tag">用户访谈</span>
+            <span class="tag">数据</span>
+            <span class="tag">A/B</span>
+          </div>
+        </div>
+        <div class="service-card accent-violet reveal d2" style="--r:1.5deg;">
+          <span class="num">04</span>
+          <h3>AI 内容与自动化</h3>
+          <p>构建 AI 工作流与智能体，把想法高效转化为内容与工具。</p>
+          <div class="tags">
+            <span class="tag">Prompt</span>
+            <span class="tag">工作流</span>
+            <span class="tag">Agent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 项目（白） -->
+  <section class="light-section" id="projects">
+    <div class="container">
+      <span class="section-badge on-light reveal">Projects</span>
+      <h2 class="section-headline on-light reveal d1">开源项目。</h2>
+      <div class="project-list reveal d1">
+        <a href="https://github.com/Irixil/xiaohongshu-skill" target="_blank" class="project-card">
+          <div>
+            <h3>xiaohongshu-skill</h3>
+            <span class="meta">AI 工具 · ★ 9</span>
+            <p class="desc">把我们的想法转化成小红书的版本。</p>
+          </div>
+          <svg class="arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
+        </a>
+        <a href="https://github.com/Irixil/ai-pm-writing-skill" target="_blank" class="project-card">
+          <div>
+            <h3>ai-pm-writing-skill</h3>
+            <span class="meta">AI 产品 · Python · ★ 2</span>
+            <p class="desc">AI 产品经理写作技能，用于证据导向的文章与反思性的产品随笔。</p>
+          </div>
+          <svg class="arrow" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 文章（黑） -->
+  <section id="writing">
+    <div class="container">
+      <span class="section-badge gold reveal">Writing</span>
+      <h2 class="section-headline on-dark reveal d1">最新文章。</h2>
+      <a href="https://www.woshipm.com/pd/6443791.html" target="_blank" class="article-card reveal d1">
+        <div class="article-cover">
+          <img src="article-cover.jpg" alt="心理需求如此普遍，为什么心理 App 仍然很难成为刚需？">
+        </div>
+        <div class="article-info">
+          <span class="article-tag">产品分析</span>
+          <h3>心理需求如此普遍，为什么心理 App 仍然很难成为刚需？</h3>
+          <p>我有心理需求，但我不需要一个心理 App。一段关于心理 App 需求、产品形态与行业现状的思考。</p>
+          <span class="btn btn-on-dark">阅读全文</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 联系（白） -->
+  <section class="light-section" id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <span class="section-badge on-light reveal">Contact</span>
+        <h2 class="section-headline on-light reveal d1">聊聊你的想法。</h2>
+        <p class="reveal d2">如果你有 AI 产品的想法、合作机会，或只是想交流对产品与行业的思考，欢迎随时联系我。</p>
+        <div class="contact-links reveal d3">
+          <a href="https://github.com/Irixil" target="_blank" class="btn btn-on-light">GitHub</a>
+          <a href="https://www.woshipm.com/pd/6443791.html" target="_blank" class="btn btn-on-light">我的文章</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚（黑） -->
+  <footer>
+    <div class="container">
+      <div class="footer-wordmark reveal">宋华英</div>
+      <div class="footer-grid reveal d1">
+        <div class="footer-col">
+          <span class="label">项目</span>
+          <a href="https://github.com/Irixil" target="_blank">GitHub</a>
+        </div>
+        <div class="footer-col">
+          <span class="label">文章</span>
+          <a href="https://www.woshipm.com/pd/6443791.html" target="_blank">人人都是产品经理</a>
+        </div>
+        <div class="footer-col">
+          <span class="label">定位</span>
+          <a href="#about">AI 产品经理</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 宋华英</span>
+        <span>用 AI 打造更好的产品。</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ============ 滚动淡入 ============
+    (function () {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+      document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+    })();
+
+    // ============ 牌桌视差 ============
+    (function () {
+      var hero = document.querySelector('.hero');
+      var table = document.querySelector('.table');
+      if (!hero || !table) return;
+      var raf = null;
+      hero.addEventListener('mousemove', function (e) {
+        if (raf) return;
+        raf = requestAnimationFrame(function () {
+          var r = hero.getBoundingClientRect();
+          var cx = (e.clientX - r.left) / r.width - 0.5;
+          var cy = (e.clientY - r.top) / r.height - 0.5;
+          table.style.transform = 'translate(' + (cx * 16) + 'px,' + (cy * 16) + 'px)';
+          raf = null;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
