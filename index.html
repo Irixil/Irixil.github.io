@@ -172,14 +172,19 @@
       gap: 14px;
     }
     .portrait-avatar {
-      width: 88px;
-      height: 88px;
+      width: 110px;
+      height: 110px;
       border-radius: 50%;
       border: 3px solid currentColor;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
       background: rgba(0, 0, 0, 0.05);
+    }
+    .portrait-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      display: block;
     }
     .portrait-name {
       font-size: 22px;
@@ -430,10 +435,7 @@
       <div class="card-drop">
         <div class="card front portrait">
           <div class="portrait-avatar">
-            <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="8" r="4"></circle>
-              <path d="M4 21v-1a7 7 0 0 1 7-7h2a7 7 0 0 1 7 7v1"></path>
-            </svg>
+            <img src="avatar.jpg" alt="宋华英头像">
           </div>
           <span class="portrait-name">宋华英</span>
           <span class="portrait-role">AI 产品经理</span>
