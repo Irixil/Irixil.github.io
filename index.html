@@ -166,35 +166,17 @@
     /* 头像卡：左上角，比普通卡大 20% */
     .portrait-card .card { --s: 1.1; }
 
-    /* 形象卡 */
+    /* 形象卡：整张照片 */
     .card.front.portrait {
-      justify-content: center;
-      gap: 14px;
-    }
-    .portrait-avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      border: 3px solid currentColor;
       overflow: hidden;
-      background: rgba(0, 0, 0, 0.05);
+      padding: 0;
     }
-    .portrait-avatar img {
+    .portrait-photo {
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center top;
       display: block;
-    }
-    .portrait-name {
-      font-size: 22px;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .portrait-role {
-      font-size: 14px;
-      font-weight: 800;
-      opacity: 0.45;
     }
 
     /* ============ Hero ============ */
@@ -434,11 +416,7 @@
     <div class="card-wrap portrait-card" style="--x:4%; --y:15%; --rot:-5deg; --z:20; --delay:0.05s; --drop-rot:-20deg;">
       <div class="card-drop">
         <div class="card front portrait">
-          <div class="portrait-avatar">
-            <img src="avatar.jpg" alt="宋华英头像">
-          </div>
-          <span class="portrait-name">宋华英</span>
-          <span class="portrait-role">AI 产品经理</span>
+          <img src="avatar.jpg" alt="宋华英头像" class="portrait-photo">
         </div>
       </div>
     </div>
